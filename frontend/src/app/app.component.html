@@ -1,0 +1,110 @@
+<div class="p-3 p-lg-5">
+  <div class="d-flex justify-between w-100">
+    <div class="title w-75">
+      <h1>Products</h1>
+    </div>
+    <div class="w-25" *ngIf="!showDetails">
+      <button type="button" class="btn btn-primary btn-sm"
+        (click)="showDetails = true">
+        <fa-icon [icon]="faEye"></fa-icon>
+      </button>
+      <button type="button" class="btn btn-secondary btn-sm"
+        (click)="addNew()">
+        <fa-icon [icon]="faPlusCircle"></fa-icon>
+      </button>
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col-md-9">
+      <table class="table table-striped" *ngIf="(products$ | async) as products">
+        <thead>
+        <tr>
+          <th scope="col">Item Name</th>
+          <th scope="col">Bought at</th>
+          <th scope="col">Sold at</th>
+          <th scope="col">Supplier</th>
+        </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let product of products" (click)="selectItem(product)">
+            <td>{{product.name}}</td>
+            <td>{{product.supplierPrice}}</td>
+            <td>{{product.sellingPrice}}</td>
+            <td>{{product.supplier}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-md-3 mb-5 px-0" *ngIf="showDetails">
+    <div class="d-flex justify-between">
+      <div class="w-75">
+        <h2>Product Detail</h2>
+      </div>
+      <div class="w-25">
+        <button type="button" class="btn btn-primary btn-sm"
+          (click)="showDetails = false">
+          <fa-icon [icon]="faEyeSlash"></fa-icon>
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm"
+          (click)="addNew()">
+          <fa-icon [icon]="faPlusCircle"></fa-icon>
+        </button>
+      </div>
+    </div>
+    <form [formGroup]="form">
+      <div class="form-group">
+        <input type="text" class="form-control" placeholder="Item name"
+          formControlName="name">
+      </div>
+      <div class="form-group">
+        <input type="text" class="form-control" placeholder="Desrcription"
+          formControlName="shortDescription">
+      </div>
+      <div class="form-group">
+        <input type="text" class="form-control" placeholder="Details"
+          formControlName="detailedDescription">
+      </div>
+      <div class="form-group">
+        <input type="text" class="form-control" placeholder="Supplier"
+          formControlName="supplier">
+      </div>
+      <div class="form-group">
+        <input type="text" class="form-control" placeholder="Bought at"
+          formControlName="supplierPrice">
+      </div>
+      <div class="form-group">
+        <input type="text" class="form-control" placeholder="Sold at"
+          formControlName="sellingPrice">
+      </div>
+      <div class="form-group">
+        <input type="text" class="form-control" placeholder="SKU"
+          formControlName="sku">
+      </div>
+
+      <div class="d-md-flex">
+        <button type="button" class="btn btn-success w-100"
+          [disabled]="form.invalid || form.pristine"
+          *ngIf="!isAdding"
+          (click)="save()">
+          {{ this._id ? 'Update' : 'Save'}}
+        </button>
+        <button type="button" class="btn btn-success w-100"
+          [disabled]="form.invalid || form.pristine"
+          *ngIf="isAdding"
+          (click)="save()">
+          Save
+        </button>
+        <button type="button" class="btn btn-warning w-100" 
+          (click)="cancelEdits()"
+          *ngIf="!form.pristine || isAdding">Cancel
+        </button>
+        <button type="button" class="btn btn-danger w-100" 
+          (click)="deleteItem()"
+          *ngIf="!isAdding || !!selectedItem">Delete
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

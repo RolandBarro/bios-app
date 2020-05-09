@@ -13,17 +13,14 @@ const productSchema = new Schema({
     detailedDescription: String,
     sellingPrice: Number,
     supplier: String,
-    supplierPrice: String,
+    supplierPrice: Number,
     imgUrl: String,
-    sku: {
-        type: String,
-        unique: true,
-    },
+    sku: String,
     dateAdded: {
         type: Number,
         default: Date.now(),
     },
-    dateUpdated: {
+    lastUpdated: {
         type: Number,
     },
     isDeleted: {

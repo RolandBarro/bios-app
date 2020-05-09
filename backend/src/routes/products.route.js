@@ -8,6 +8,11 @@ router.post('/', (req, res) => {
   products.create();
 });
 
+router.put('/', (req, res) => {
+  const products = new ProductsController(req, { res });
+  products.updated();
+});
+
 router.get('/', (req, res) => {
   const products = new ProductsController(req, { res });
   products.list();

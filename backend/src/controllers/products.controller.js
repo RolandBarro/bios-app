@@ -11,22 +11,63 @@ class ProductsController {
   }
 
   async create() {
-    
     try {
       const { body } = this.data;  
 
-      const product = new Product(body);
+      const data = {
+        ...body,
+        _id: null,
+      };
+
+      const product = new Product(data);
       const result = await product.save();
 
       if (result) {
         return this.res.status(200)
-          .send({ success: true, status: 200, message: 'New product saved!', data: result });
+          .send({ success: true, status: 200, message: 'Item saved!', data: result });
       }
     } catch(error) {
       this.res.status(500)
-        .send({ success: false, status: 500, message: 'Product not saved!', error });
+        .send({ success: false, status: 500, message: 'Item not saved!', error });
 
-      throw new Error('Saving new product. ', error);
+      throw new Error('Saving new Item. ', error);
+    }
+  }
+
+  async updated() {
+    try {
+      const { body } = this.data; 
+      
+      if (!body._id) {
+        throw new Error('Unable update item. Item id is required.');
+      }
+
+      const query = {
+        _id: body._id,
+      };
+
+      await Product.findOneAndUpdate(query, 
+        {
+          $set: {
+            ...body,
+            lastUpdated: Date.now(),
+          }
+        },
+        (err, result) => {
+          if (err) {
+            this.res.status(500).send({status: 500, type: 'error', message: 'Failed to update item.', err});
+            return;
+          }
+                  
+          this.res.status(200).send({status: 200, type: 'success', message: 'Student removed successfully!', data: result });
+          return;
+        }
+      );
+    } catch(error) {
+      this.res.status(500)
+        .send({ success: false, status: 500, message: 'Item not saved!', error });
+
+      throw new Error('Saving new Item. ', error);
     }
   }
 
