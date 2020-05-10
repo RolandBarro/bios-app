@@ -2,11 +2,13 @@ import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 // third-party
+import { faEye, faEyeSlash, faPlusCircle, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
-import { faEye, faEyeSlash, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 
 // services
 import { ProductsService } from './services/products.service';
+import { UtilityService } from './services/utility.service';
 
 @Component({
   selector: 'app-root',
@@ -15,12 +17,14 @@ import { ProductsService } from './services/products.service';
 })
 export class AppComponent {
   form: FormGroup;
+  searchForm: FormGroup;
   selectedItem: any;
-  showDetails = true;
+  showDetails = false;
   isAdding: boolean;
   faEye = faEye;
   faEyeSlash = faEyeSlash;
   faPlusCircle = faPlusCircle;
+  faSearch = faSearch;
 
   title = 'bios-fe';
 
@@ -30,6 +34,7 @@ export class AppComponent {
   constructor(
     private fb: FormBuilder,
     private _productsService: ProductsService,
+    private _utilityService: UtilityService,
   ) {
     this.products$ = this._productsService.products;
     this._productsService.getProducts();
@@ -46,9 +51,21 @@ export class AppComponent {
   get supplierPrice() { return this.form.get('supplierPrice'); }
   get sellingPrice() { return this.form.get('sellingPrice'); }
   get sku() { return this.form.get('sku'); }
-
+  get filter() {return this.searchForm.get('filter'); }
 
   initForm() {
+    this.searchForm = this.fb.group({
+      filter: [''],
+    });
+
+    this.filter.valueChanges.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map(value => value)
+    ).subscribe(search => {
+      this._productsService.getProducts({ search });
+    });
+
     this.form = this.fb.group({
       _id: [''],
       name: ['', Validators.required],
@@ -63,14 +80,17 @@ export class AppComponent {
 
   addNew() {
     this.isAdding = true;
+    this.showDetails = true;
     this.form.reset();
+    this._utilityService.scrollToSection('itemForm');
   }
 
   cancelEdits() {
     this.isAdding = false;
+    this.showDetails = false;
     this.form.reset();
     this.selectItem();
-    this.form.patchValue({ ...this.selectedItem }, { emitEvent: true });
+    this._utilityService.scrollToSection('itemList');
   }
 
   deleteItem() {
@@ -85,6 +105,9 @@ export class AppComponent {
 
   save() {
     this._productsService.saveItem(this.form.value);
+    this.isAdding = false;
+    this.showDetails = false;
+    this.selectItem();
   }
 
   selectItem(item: any = null) {
@@ -94,6 +117,7 @@ export class AppComponent {
           this.selectedItem = this.selectedItem || products[0];
           this.form.patchValue({ ...this.selectedItem }, { emitEvent: true });
           this.isAdding = !this.selectedItem;
+          this._utilityService.scrollToSection('itemDetails');
         } else {
           console.log('no products');
           this.selectedItem = null;
@@ -102,7 +126,9 @@ export class AppComponent {
       });
     } else {
       this.selectedItem = item;
+      this.showDetails = true;
       this.form.patchValue({ ...this.selectedItem }, { emitEvent: true });
+      this._utilityService.scrollToSection('itemDetails');
     }
   }
 }

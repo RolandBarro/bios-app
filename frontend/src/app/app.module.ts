@@ -11,6 +11,7 @@ import { AppComponent } from './app.component';
 // services
 import { HttpHelperService } from './services/http-helper.service';
 import { ProductsService } from './services/products.service';
+import { UtilityService } from './services/utility.service';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { ProductsService } from './services/products.service';
   providers: [
     HttpHelperService,
     ProductsService,
+    UtilityService,
   ],
   bootstrap: [AppComponent]
 })
