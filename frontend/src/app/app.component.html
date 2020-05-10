@@ -4,11 +4,6 @@
       <h1>Item List</h1>
     </div>
     <div class="header-action w-25" *ngIf="!showDetails">
-      <button type="button" class="btn btn-primary btn-sm"
-        (click)="showDetails = true"
-        *ngIf="selectedItem">
-        <fa-icon [icon]="faEye"></fa-icon>
-      </button>
       <button type="button" class="btn btn-secondary btn-sm"
         (click)="addNew()">
         <fa-icon [icon]="faPlusCircle"></fa-icon>
@@ -36,7 +31,7 @@
       </a>
       <ng-template ngbNavContent *ngIf="(products$ | async) as products">
         <div class="card-container">
-          <div class="card w-100 p-3" *ngFor="let product of products">
+          <div class="card w-100" *ngFor="let product of products">
             <div *ngIf="editingItem !== product._id">
               <img class="card-img-top" [src]="product.imgUrl" alt="Card image cap" *ngIf="!!product.imgUrl">
               <div class="card-body">
