@@ -2,13 +2,23 @@ import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 // third-party
-import { faEye, faEyeSlash, faPlusCircle, faSearch } from '@fortawesome/free-solid-svg-icons';
+import {
+  faEye,
+  faEyeSlash,
+  faPlusCircle,
+  faSearch,
+  faTable,
+  faCreditCard,
+  faTimesCircle,
+  faPen,
+} from '@fortawesome/free-solid-svg-icons';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
 
 // services
 import { ProductsService } from './services/products.service';
 import { UtilityService } from './services/utility.service';
+import { ProductItem } from './models/product-item.model';
 
 @Component({
   selector: 'app-root',
@@ -18,17 +28,24 @@ import { UtilityService } from './services/utility.service';
 export class AppComponent {
   form: FormGroup;
   searchForm: FormGroup;
-  selectedItem: any;
+  selectedItem: ProductItem;
   showDetails = false;
   isAdding: boolean;
+  active = 'card';
+  editingItem: string;
+
   faEye = faEye;
   faEyeSlash = faEyeSlash;
   faPlusCircle = faPlusCircle;
   faSearch = faSearch;
+  faTable = faTable;
+  faCreditCard = faCreditCard;
+  faTimesCircle = faTimesCircle;
+  faPen = faPen;
 
   title = 'bios-fe';
 
-  private _products$ = new BehaviorSubject<any>([]);
+  private _products$ = new BehaviorSubject<ProductItem[]>([]);
   products$ = this._products$.asObservable();
 
   constructor(
@@ -52,6 +69,12 @@ export class AppComponent {
   get sellingPrice() { return this.form.get('sellingPrice'); }
   get sku() { return this.form.get('sku'); }
   get filter() {return this.searchForm.get('filter'); }
+
+  editItem(item: ProductItem) {
+    this.editingItem = item._id;
+    this.selectedItem = item;
+    this.form.patchValue({ ...item }, { emitEvent: true });
+  }
 
   initForm() {
     this.searchForm = this.fb.group({
@@ -91,9 +114,11 @@ export class AppComponent {
     this.form.reset();
     this.selectItem();
     this._utilityService.scrollToSection('itemList');
+    this.editingItem = null;
   }
 
-  deleteItem() {
+  deleteItem(item: ProductItem) {
+    this.selectedItem = item;
     const value = {
       ...this.selectedItem,
       isDeleted: true,

@@ -6,6 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 // services
 import { environment as env } from '../../environments/environment';
 import { HttpHelperService } from './http-helper.service';
+import { ProductItem } from '../models/product-item.model';
 
 @Injectable({
   providedIn: 'root'
@@ -40,7 +41,7 @@ export class ProductsService {
       );
   }
 
-  saveItem(data: any) {
+  saveItem(data: ProductItem) {
     if (data._id) {
       return this.updateItem(data);
     }
@@ -64,7 +65,7 @@ export class ProductsService {
       );
   }
 
-  updateItem(data) {
+  updateItem(data: ProductsService) {
     const { apiBase } = this;
     
     return this.httpClient.put(`${apiBase}/products`, data)
