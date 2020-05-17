@@ -72,7 +72,7 @@ class ProductsController {
   }
 
   async list() {
-    // try {
+    try {
       const { query } = this.data;
       const search = {
         isDeleted: false,
@@ -89,19 +89,19 @@ class ProductsController {
         ];
       }
 
-      console.log('search: ', search);
+      console.log('search: ', JSON.stringify(search));
 
       const list = await Product.find(search, '-__v -isDeleted').sort({ 'name': 'asc' });
       
       return this.res.status(200)
           .send({ success: true, status: 200, message: 'Success!', data: list });
 
-    // } catch(error) {
-    //   this.res.status(500)
-    //     .send({ success: false, status: 500, message: 'Error fetching products!', error });
+    } catch(error) {
+      this.res.status(500)
+        .send({ success: false, status: 500, message: 'Error fetching products!', error });
 
-    //   throw new Error('Fetching products. ', error);
-    // }
+      throw new Error('Fetching products. ', error);
+    }
   }
 
   test() {

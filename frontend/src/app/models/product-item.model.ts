@@ -5,6 +5,7 @@ export interface ProductItem {
   name: string;
   sellingPrice: number | string;
   shortDescription: string;
+  pricingDetails: string;
   sku: string;
   supplier: string;
 	supplierPrice: number | string;

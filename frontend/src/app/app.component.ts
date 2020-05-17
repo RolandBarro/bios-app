@@ -67,6 +67,7 @@ export class AppComponent {
   get name() { return this.form.get('name'); }
   get shortDescription() { return this.form.get('shortDescription'); }
   get detailedDescription() { return this.form.get('detailedDescription'); }
+  get pricingDetails() { return this.form.get('pricingDetails'); }
   get supplier() { return this.form.get('supplier'); }
   get supplierPrice() { return this.form.get('supplierPrice'); }
   get sellingPrice() { return this.form.get('sellingPrice'); }
@@ -76,7 +77,7 @@ export class AppComponent {
   editItem(item: ProductItem) {
     this.selectedItem = item;
     this.showList = false;
-    this.showForm = true
+    this.showForm = true;
     this.form.patchValue({ ...item }, { emitEvent: true });
   }
 
@@ -98,6 +99,7 @@ export class AppComponent {
       name: ['', Validators.required],
       shortDescription: [''],
       detailedDescription: [''],
+      pricingDetails: [''],
       supplier: [''],
       supplierPrice: [0],
       sellingPrice: [0],
