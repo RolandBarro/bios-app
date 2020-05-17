@@ -31,87 +31,101 @@
       </a>
       <ng-template ngbNavContent *ngIf="(products$ | async) as products">
         <div class="card-container">
-          <div class="card w-100" *ngFor="let product of products">
-            <div *ngIf="editingItem !== product._id">
-              <img class="card-img-top" [src]="product.imgUrl" alt="Card image cap" *ngIf="!!product.imgUrl">
-              <div class="card-body">
-                <h5 class="card-title text-uppercase"><strong>{{ product.name }}</strong></h5>
-                <p class="card-text">{{ product.shortDescription }}</p>
-
-                <div class="d-flex justify-content-between">
-                  <div class="price-container">
-                    <div><span>Php </span><strong>{{ product.sellingPrice }}</strong></div>
-                  </div>
-                  <div class="action-container">
-                    <button type="button" class="btn btn-primary btn-sm" 
-                      *ngIf="editingItem !== product._id"
-                      (click)="editItem(product)">
-                      <fa-icon [icon]="faPen"></fa-icon>
-                    </button>
-                    <button type="button" class="btn btn-primary btn-sm" 
-                      *ngIf="editingItem === product._id"
-                      (click)="editItem(null)">
-                      Cancel
-                    </button>
-                    <button type="button" class="btn btn-danger btn-sm" 
-                      (click)="deleteItem(product)"
-                      *ngIf="editingItem !== product._id">
-                        <fa-icon [icon]="faTimesCircle"></fa-icon>
-                    </button>
+          <div *ngIf="products.length && showList">
+            <div class="card w-100" *ngFor="let product of products">
+              <div *ngIf="editingItem !== product._id">
+                <img class="card-img-top" [src]="product.imgUrl" alt="Card image cap" *ngIf="!!product.imgUrl">
+                <div class="card-body">
+                  <h5 class="card-title text-uppercase"><strong>{{ product.name }}</strong></h5>
+                  <p class="card-text">{{ product.shortDescription }}</p>
+  
+                  <div class="d-flex justify-content-between">
+                    <div class="price-container">
+                      <div><span>Php </span><strong>{{ product.sellingPrice }}</strong></div>
+                    </div>
+                    <div class="action-container">
+                      <button type="button" class="btn btn-primary btn-sm" 
+                        *ngIf="editingItem !== product._id"
+                        (click)="editItem(product)">
+                        <fa-icon [icon]="faPen"></fa-icon>
+                      </button>
+                      <button type="button" class="btn btn-primary btn-sm" 
+                        *ngIf="editingItem === product._id"
+                        (click)="editItem(null)">
+                        Cancel
+                      </button>
+                      <button type="button" class="btn btn-danger btn-sm" 
+                        (click)="deleteItem(product)"
+                        *ngIf="editingItem !== product._id">
+                          <fa-icon [icon]="faTimesCircle"></fa-icon>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div *ngIf="editingItem === product._id">
-              <form id="itemForm" [formGroup]="form">
-                <div class="form-group">
-                  <input type="text" class="form-control" placeholder="Item name"
-                    formControlName="name">
-                </div>
-                <div class="form-group">
-                  <input type="text" class="form-control" placeholder="Desrcription"
-                    formControlName="shortDescription">
-                </div>
-                <div class="form-group">
-                  <input type="text" class="form-control" placeholder="Details"
-                    formControlName="detailedDescription">
-                </div>
-                <div class="form-group">
-                  <input type="text" class="form-control" placeholder="Supplier"
-                    formControlName="supplier">
-                </div>
-                <div class="form-group">
-                  <input type="number" class="form-control" placeholder="Bought at"
-                    formControlName="supplierPrice">
-                </div>
-                <div class="form-group">
-                  <input type="number" class="form-control" placeholder="Sold at"
-                    formControlName="sellingPrice">
-                </div>
-                <div class="form-group">
-                  <input type="text" class="form-control" placeholder="SKU"
-                    formControlName="sku">
-                </div>
-          
-                <div class="d-md-flex">
-                  <button type="button" class="btn btn-success w-100"
-                    [disabled]="form.invalid || form.pristine"
-                    *ngIf="!isAdding"
-                    (click)="save()">
-                    {{ this._id ? 'Update' : 'Save'}}
-                  </button>
-                  <button type="button" class="btn btn-success w-100"
-                    [disabled]="form.invalid || form.pristine"
-                    *ngIf="isAdding"
-                    (click)="save()">
-                    Save
-                  </button>
-                  <button type="button" class="btn btn-warning w-100" 
-                    (click)="cancelEdits()">Cancel
-                  </button>
-                </div>
-              </form>
+          </div>
+          <div *ngIf="!products.length && !showForm">
+            <div class="no-content">
+              <div>
+                <p>No Items yet.</p>
+                <button class="btn btn-primary" (click)="addNew()">Add now!</button>
+              </div>
             </div>
+          </div>
+          <div class="p-3" *ngIf="showForm">
+            <form id="itemForm" [formGroup]="form">
+              <div class="form-group">
+                <input type="text" class="form-control" placeholder="Item name"
+                  formControlName="name">
+              </div>
+              <div class="form-group">
+                <textarea type="text" class="form-control" placeholder="Feature"
+                  rows="5"
+                  formControlName="shortDescription">
+                </textarea>
+              </div>
+              <div class="form-group">
+                <textarea type="text" class="form-control" placeholder="Details"
+                  rows="5"
+                  formControlName="detailedDescription">
+                </textarea>
+              </div>
+              <div class="form-group">
+                <input type="text" class="form-control" placeholder="Supplier"
+                  formControlName="supplier">
+              </div>
+              <div class="form-group">
+                <input type="number" class="form-control" placeholder="Bought at"
+                  formControlName="supplierPrice">
+              </div>
+              <div class="form-group">
+                <input type="number" class="form-control" placeholder="Sold at"
+                  formControlName="sellingPrice">
+              </div>
+              <!-- <div class="form-group">
+                <input type="text" class="form-control" placeholder="SKU"
+                  formControlName="sku">
+              </div> -->
+        
+              <div class="d-md-flex">
+                <button type="button" class="btn btn-success w-100"
+                  [disabled]="form.invalid || form.pristine"
+                  *ngIf="!!selectedItem"
+                  (click)="save()">
+                  {{ this._id ? 'Update' : 'Save'}}
+                </button>
+                <button type="button" class="btn btn-success w-100"
+                  [disabled]="form.invalid || form.pristine"
+                  *ngIf="!selectedItem"
+                  (click)="save()">
+                  Save
+                </button>
+                <button type="button" class="btn btn-warning w-100" 
+                  (click)="cancelEdits()">Cancel
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </ng-template>

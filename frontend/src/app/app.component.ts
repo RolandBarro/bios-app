@@ -30,7 +30,10 @@ export class AppComponent {
   searchForm: FormGroup;
   selectedItem: ProductItem;
   showDetails = false;
-  isAdding: boolean;
+
+  showList = true;
+  showForm = false;
+
   active = 'card';
   editingItem: string;
 
@@ -57,7 +60,7 @@ export class AppComponent {
     this._productsService.getProducts();
 
     this.initForm();
-    this.selectItem();
+    // this.selectItem();
   }
 
   get _id() { return this.form.get('_id'); }
@@ -71,8 +74,9 @@ export class AppComponent {
   get filter() {return this.searchForm.get('filter'); }
 
   editItem(item: ProductItem) {
-    this.editingItem = item._id;
     this.selectedItem = item;
+    this.showList = false;
+    this.showForm = true
     this.form.patchValue({ ...item }, { emitEvent: true });
   }
 
@@ -102,19 +106,21 @@ export class AppComponent {
   }
 
   addNew() {
-    this.isAdding = true;
-    this.showDetails = true;
+    this.showForm = true;
+    this.showList = false;
     this.form.reset();
-    this._utilityService.scrollToSection('itemForm');
+    // this.showDetails = true;
+    // this._utilityService.scrollToSection('itemForm');
   }
 
   cancelEdits() {
-    this.isAdding = false;
-    this.showDetails = false;
     this.form.reset();
-    this.selectItem();
-    this._utilityService.scrollToSection('itemList');
-    this.editingItem = null;
+    this.showForm = false;
+    this.showList = true;
+    // this.showDetails = false;
+    // this.selectItem();
+    // this._utilityService.scrollToSection('itemList');
+    // this.editingItem = null;
   }
 
   deleteItem(item: ProductItem) {
@@ -126,11 +132,12 @@ export class AppComponent {
 
     this._productsService.saveItem(value);
     this.form.reset();
+    this.selectedItem = null;
   }
 
   save() {
     this._productsService.saveItem(this.form.value);
-    this.isAdding = false;
+    this.showForm = false;
     this.showDetails = false;
     this.selectItem();
   }
@@ -141,12 +148,13 @@ export class AppComponent {
         if (products && products.length) {
           this.selectedItem = this.selectedItem || products[0];
           this.form.patchValue({ ...this.selectedItem }, { emitEvent: true });
-          this.isAdding = !this.selectedItem;
+          this.showForm = !this.selectedItem;
+          this.showList = true;
           this._utilityService.scrollToSection('itemDetails');
         } else {
           console.log('no products');
           this.selectedItem = null;
-          this.isAdding = true;
+          this.showForm = true;
         }
       });
     } else {

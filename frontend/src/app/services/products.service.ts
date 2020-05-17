@@ -65,9 +65,9 @@ export class ProductsService {
       );
   }
 
-  updateItem(data: ProductsService) {
+  updateItem(data: ProductItem) {
     const { apiBase } = this;
-    
+
     return this.httpClient.put(`${apiBase}/products`, data)
       .subscribe(
         (response: any) => {
